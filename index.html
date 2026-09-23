@@ -1,153 +1,134 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MedContent AI</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#172033}
-.app{display:flex;min-height:100vh}.side{width:250px;background:#10243e;color:white;padding:24px 16px;position:fixed;inset:0 auto 0 0}.brand{font-size:22px;font-weight:800;padding:10px 12px 28px}.brand span{color:#39c6a0}.nav button{width:100%;border:0;background:transparent;color:#d7e2ef;text-align:left;padding:13px 14px;border-radius:10px;margin:3px 0;font-size:14px;cursor:pointer}.nav button.active,.nav button:hover{background:#1d3858;color:#fff}.main{margin-left:250px;width:calc(100% - 250px);padding:28px;max-width:1400px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.top h1{margin:0;font-size:28px}.badge{background:#e2f8f2;color:#087b62;padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{background:white;border:1px solid #e7ebf1;border-radius:16px;padding:20px;box-shadow:0 4px 16px #10243e0b}.stat{font-size:28px;font-weight:800;margin:8px 0}.muted{color:#718096;font-size:13px}.section{margin-top:22px}.section h2{font-size:18px;margin:0 0 14px}.creator{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.label{font-size:13px;font-weight:700;margin:13px 0 7px;display:block}textarea,input,select{width:100%;padding:12px;border:1px solid #d9e0e9;border-radius:10px;font:inherit;background:#fff}textarea{min-height:115px;resize:vertical}.btn{border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:#18b98b;color:white}.secondary{background:#eef3f8;color:#22334a}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.output{min-height:300px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:16px;white-space:pre-wrap;line-height:1.55}.platforms{display:flex;gap:10px;flex-wrap:wrap}.pill{padding:8px 12px;border:1px solid #dbe3ed;border-radius:20px;font-size:12px}.notice{background:#fff8e6;border:1px solid #f4df9b;padding:12px;border-radius:10px;font-size:12px;color:#765a00;margin-top:12px}.hide{display:none}@media(max-width:900px){.side{width:210px}.main{margin-left:210px;width:calc(100% - 210px)}.grid{grid-template-columns:repeat(2,1fr)}.creator{grid-template-columns:1fr}}@media(max-width:650px){.side{position:static;width:100%;min-height:auto}.app{display:block}.main{margin:0;width:100%;padding:18px}.grid{grid-template-columns:1fr 1fr}.top{gap:10px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap}.brand{padding-bottom:12px}}
-
-.login{position:fixed;inset:0;background:#10243e;display:flex;align-items:center;justify-content:center;z-index:99;padding:20px}.loginbox{width:min(420px,100%);background:#fff;border-radius:20px;padding:30px;box-shadow:0 20px 60px #0005}.loginbox h1{margin:0 0 6px}.loginbox .muted{margin-bottom:22px}.err{color:#c53030;font-size:13px;margin-top:9px;display:none}.logout{position:absolute;right:28px;top:24px}
-.adminbar{display:flex;align-items:center;gap:10px}.avatar{width:34px;height:34px;border-radius:50%;background:#18b98b;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedContent AI</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        *{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#1e293b}
+        .app{display:flex;min-height:100vh}.side{width:250px;background:#10243e;color:white;padding:24px;display:flex;flex-direction:column;gap:16px}
+        .brand{font-size:20px;font-weight:700}.nav button{width:100%;text-align:left;padding:12px;margin:4px 0;background:transparent;border:none;color:#94a3b8;border-radius:8px;cursor:pointer;font-size:15px}
+        .nav button.active{background:#1e3a8a;color:white}.main{flex:1;padding:32px}.section{background:white;padding:24px;border-radius:12px;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:20px}
+        .btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:600}.btn-primary{background:#2563eb;color:white}.btn-danger{background:#dc2626;color:white}
+        input,select,textarea{width:100%;padding:10px;margin:8px 0 16px;border:1px solid #cbd5e1;border-radius:6px}
+        .hide{display:none}
+    </style>
 </head>
 <body>
-<div id="login" class="login">
-  <div class="loginbox">
-    <h1>🩺 MedContent AI</h1>
-    <div class="muted">Admin Login</div>
-    <label class="label">Username</label>
-    <input id="loginUser" value="admin" autocomplete="username">
-    <label class="label">Password</label>
-    <input id="loginPass" type="password" placeholder="Enter admin password" autocomplete="current-password">
-    <div id="loginErr" class="err">Invalid username or password.</div>
-    <div class="actions"><button class="btn primary" style="width:100%" onclick="login()">Login to Dashboard</button></div>
-    <div class="notice">Prototype login only. For a real public website, the password must be protected by a server/database rather than stored in browser code.</div>
-  </div>
-</div>
-<div class="app">
-<aside class="side">
-<div class="brand">🩺 MedContent <span>AI</span></div>
-<div class="nav">
-<button class="active" onclick="show('dashboard',this)">📊 Dashboard</button>
-<button onclick="show('creator',this)">✍️ Script Creator</button>
-<button onclick="show('video',this)">🎬 Video Workflow</button>
-<button onclick="show('thumbnail',this)">🖼️ Thumbnail</button>
-<button onclick="show('publish',this)">🚀 Publish</button>
-</div>
-</aside>
-<main class="main">
-<section id="dashboard">
-<div class="top"><div><h1>Medical Content Studio</h1><div class="muted">Create professional nursing & medical short-form content.</div></div><div class="adminbar"><div><b>Admin</b><div class="muted">Owner</div></div><div class="avatar">A</div><button class="btn secondary" onclick="logout()">Logout</button></div></div>
-<div class="grid">
-<div class="card"><div class="muted">Videos created</div><div class="stat">0</div><div class="muted">Start your first video</div></div>
-<div class="card"><div class="muted">Draft scripts</div><div class="stat">0</div><div class="muted">Ready for editing</div></div>
-<div class="card"><div class="muted">Platforms</div><div class="stat">4</div><div class="muted">Shorts • Reels • TikTok • Facebook</div></div>
-<div class="card"><div class="muted">Status</div><div class="stat">Ready</div><div class="muted">Prototype mode</div></div>
-</div>
-<div class="section card"><h2>Quick Start</h2><p class="muted">Enter a medical topic and generate a short-video script. The prototype keeps your content workflow in one place.</p>
-<div class="actions"><button class="btn primary" onclick="show('creator',document.querySelectorAll('.nav button')[1])">Create a Script</button></div></div>
-</section>
+    <div class="app">
+        <aside class="side">
+            <div class="brand">MedContent <span>AI</span></div>
+            <nav class="nav">
+                <button class="active" onclick="show('dashboard', this)">📊 Dashboard</button>
+                <button onclick="show('creator', this)">📝 Script Creator</button>
+                <button onclick="show('publish', this)">🚀 Publish to YouTube</button>
+            </nav>
+        </aside>
+        <main class="main">
+            <!-- Dashboard -->
+            <section id="dashboard" class="section">
+                <h2>Medical Content Studio</h2>
+                <p>Welcome to MedContent AI. Status: <strong>System Online</strong></p>
+            </section>
 
-<section id="creator" class="hide">
-<div class="top"><div><h1>AI Script Creator</h1><div class="muted">Turn a topic into a short educational script.</div></div></div>
-<div class="creator">
-<div class="card">
-<label class="label">Medical topic</label><input id="topic" placeholder="e.g. 5 signs of hypoglycemia">
-<label class="label">Video length</label><select id="length"><option>15 seconds</option><option selected>30 seconds</option><option>60 seconds</option></select>
-<label class="label">Language</label><select id="lang"><option>English</option><option>Simple Urdu</option><option>Roman Urdu</option><option>English + Roman Urdu</option></select>
-<label class="label">Audience</label><select id="aud"><option>Nursing students</option><option>General public</option><option>Healthcare students</option></select>
-<div class="actions"><button class="btn primary" onclick="generate()">Generate Script</button><button class="btn secondary" onclick="clearAll()">Clear</button></div>
-<div class="notice">Educational content only. Verify clinical information with reliable medical sources before publishing.</div>
-</div>
-<div class="card"><h2>Generated Script</h2><div id="output" class="output">Your script will appear here…</div><div class="actions"><button class="btn secondary" onclick="copyText()">Copy</button><button class="btn primary" onclick="show('video',document.querySelectorAll('.nav button')[2])">Continue to Video</button></div></div>
-</div>
-</section>
+            <!-- Script Creator -->
+            <section id="creator" class="section hide">
+                <h2>AI Script Creator</h2>
+                <label>Medical Topic</label>
+                <input id="topic" placeholder="e.g. 5 signs of hypoglycemia">
+                <button class="btn btn-primary" onclick="generateScript()">Generate Script</button>
+                <div id="scriptOutput" style="margin-top:16px;white-space:pre-wrap;"></div>
+            </section>
 
-<section id="video" class="hide">
-<div class="top"><div><h1>Video Workflow</h1><div class="muted">Prepare your short for production.</div></div></div>
-<div class="card">
-<h2>Production checklist</h2>
-<div class="grid">
-<div class="card"><b>1. Voice</b><p class="muted">Record your voice or connect a voice generator.</p></div>
-<div class="card"><b>2. Visuals</b><p class="muted">Add medical B-roll, diagrams or an AI presenter.</p></div>
-<div class="card"><b>3. Captions</b><p class="muted">Generate readable subtitles for mobile viewers.</p></div>
-<div class="card"><b>4. Export</b><p class="muted">Recommended: vertical 9:16, 1080×1920.</p></div>
-</div>
-<div class="actions"><button class="btn primary" onclick="show('thumbnail',document.querySelectorAll('.nav button')[3])">Make Thumbnail</button></div>
-</div>
-</section>
+            <!-- YouTube Publish Section -->
+            <section id="publish" class="section hide">
+                <h2>Publish to YouTube</h2>
+                <p>Upload your generated video directly to your YouTube Channel.</p>
+                
+                <div id="authArea">
+                    <button class="btn btn-danger" onclick="loginYouTube()">🔑 Connect YouTube Channel</button>
+                </div>
 
-<section id="thumbnail" class="hide">
-<div class="top"><div><h1>Thumbnail Studio</h1><div class="muted">Create a simple thumbnail brief.</div></div></div>
-<div class="card">
-<label class="label">Thumbnail headline</label><input id="thumb" placeholder="5 SIGNS OF HYPOGLYCEMIA">
-<label class="label">Visual direction</label><textarea id="visual" placeholder="Clean medical background, nurse/doctor, large readable headline, professional educational style."></textarea>
-<div class="actions"><button class="btn primary" onclick="makeBrief()">Generate Thumbnail Brief</button></div>
-<div id="brief" class="output" style="margin-top:14px">Thumbnail brief will appear here…</div>
-<div class="actions"><button class="btn primary" onclick="show('publish',document.querySelectorAll('.nav button')[4])">Continue to Publish</button></div>
-</div>
-</section>
+                <div id="uploadArea" class="hide">
+                    <p style="color:green;font-weight:bold;">✅ YouTube Connected!</p>
+                    <label>Video Title</label>
+                    <input id="ytTitle" placeholder="Enter video title">
+                    <label>Video Description</label>
+                    <textarea id="ytDesc" placeholder="Enter video description"></textarea>
+                    <label>Select Video File</label>
+                    <input type="file" id="ytFile" accept="video/*">
+                    <button class="btn btn-primary" onclick="uploadVideo()">Upload Video</button>
+                </div>
+            </section>
+        </main>
+    </div>
 
-<section id="publish" class="hide">
-<div class="top"><div><h1>Publish Center</h1><div class="muted">Prepare metadata and publishing destinations.</div></div></div>
-<div class="card">
-<label class="label">Title</label><input id="title" placeholder="5 Signs of Hypoglycemia You Should Know">
-<label class="label">Caption</label><textarea id="caption" placeholder="Educational medical content. Follow for more nursing and health education."></textarea>
-<label class="label">Hashtags</label><input id="tags" placeholder="#nursing #medical #health #nursingstudent">
-<label class="label">Platforms</label><div class="platforms"><span class="pill">YouTube Shorts</span><span class="pill">Instagram Reels</span><span class="pill">Facebook Reels</span><span class="pill">TikTok</span></div>
-<div class="actions"><button class="btn primary" onclick="alert('Prototype: publishing connections are not connected yet.')">Publish</button><button class="btn secondary" onclick="alert('Prototype saved locally in this page session.')">Save Draft</button></div>
-<div class="notice">Publishing requires connecting your social accounts and giving the website permission to post. This prototype does not upload anything automatically.</div>
-</div>
-</section>
-</main>
-</div>
-<script>
-const ADMIN_USER="admin", ADMIN_PASS="MedAdmin123!";
-function login(){
-  const u=document.getElementById('loginUser').value.trim();
-  const pw=document.getElementById('loginPass').value;
-  if(u===ADMIN_USER && pw===ADMIN_PASS){
-    sessionStorage.setItem('med_admin','1');
-    document.getElementById('login').style.display='none';
-    document.getElementById('loginErr').style.display='none';
-  }else document.getElementById('loginErr').style.display='block';
-}
-function logout(){sessionStorage.removeItem('med_admin');location.reload()}
-document.addEventListener('DOMContentLoaded',()=>{
-  if(sessionStorage.getItem('med_admin')==='1') document.getElementById('login').style.display='none';
-});
+    <script>
+        // CONFIGURATION
+        const CLIENT_ID = '1095384336789-p4k97r1gl36roc6brqtqut0624in0fl3.apps.googleusercontent.com';
 
-function show(id,btn){document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById(id).classList.remove('hide');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active')}
-function generate(){let t=document.getElementById('topic').value.trim()||'a medical topic';let l=document.getElementById('length').value;let lang=document.getElementById('lang').value;let audience=document.getElementById('aud').value;let script=`HOOK:\\n“Do you know these important facts about ${t}?”\\n\\nMAIN:\\n1. Start with the key definition or concept in one simple sentence.\\n2. Explain the most important signs, causes, or nursing points.\\n3. Give one practical safety point for ${audience}.\\n\\nCTA:\\n“Save this video and follow for more medical and nursing education.”\\n\\nFORMAT:\\n${l} • ${lang} • Vertical 9:16\\n\\nSAFETY:\\nEducational content only. Verify clinical details with reliable medical references before publishing.`;document.getElementById('output').textContent=script;document.getElementById('title').value=t.replace(/^./,c=>c.toUpperCase())+' | Medical & Nursing';document.getElementById('caption').value='Learn the key points about '+t+'. Educational content for nursing and health awareness.';document.getElementById('tags').value='#nursing #medical #health #nursingstudent #medicaleducation'}
-function copyText(){navigator.clipboard?.writeText(document.getElementById('output').textContent);alert('Script copied.')}
-function clearAll(){document.getElementById('topic').value='';document.getElementById('output').textContent='Your script will appear here…'}
-function makeBrief(){let h=document.getElementById('thumb').value||'MEDICAL TOPIC';let v=document.getElementById('visual').value||'Clean professional medical design';document.getElementById('brief').textContent=`THUMBNAIL BRIEF\\n\\nHeadline: ${h}\\nStyle: ${v}\\nLayout: Large headline, clear subject, strong contrast, minimal text.\\nCanvas: 16:9 for YouTube or 9:16 cover for Reels/Shorts.`}
-</script>
+        let accessToken = null;
+
+        function show(id, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hide'));
+            document.getElementById(id).classList.remove('hide');
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function loginYouTube() {
+            const client = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: 'https://www.googleapis.com/auth/youtube.upload',
+                callback: (response) => {
+                    if (response.access_token) {
+                        accessToken = response.access_token;
+                        document.getElementById('authArea').classList.add('hide');
+                        document.getElementById('uploadArea').classList.remove('hide');
+                    }
+                },
+            });
+            client.requestAccessToken();
+        }
+
+        async function uploadVideo() {
+            const file = document.getElementById('ytFile').files[0];
+            const title = document.getElementById('ytTitle').value;
+            const desc = document.getElementById('ytDesc').value;
+
+            if (!file || !accessToken) {
+                alert('Please select a video and ensure YouTube is connected.');
+                return;
+            }
+
+            const metadata = {
+                snippet: { title: title, description: desc, categoryId: '27' },
+                status: { privacyStatus: 'public' }
+            };
+
+            const form = new FormData();
+            form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+            form.append('file', file);
+
+            alert('Uploading video to YouTube... Please wait.');
+
+            try {
+                const res = await fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=multipart&part=snippet,status', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${accessToken}` },
+                    body: form
+                });
+                const data = await res.json();
+                if (data.id) {
+                    alert('Video Uploaded Successfully! Video ID: ' + data.id);
+                } else {
+                    alert('Upload failed: ' + (data.error?.message || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Upload error: ' + err.message);
+            }
+        }
+    </script>
 </body>
 </html>
-<script>
-async function generateScript() {
-  const topic = document.getElementById('topicInput')?.value || "Dengue Fever";
-  const apiKey = "YOUR_GEMINI_API_KEY_HERE"; // Yahan apni copied API key paste karein
-  
-  const prompt = `Write a short medical educational video script about: ${topic}`;
-  
-  try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
-    });
-    
-    const data = await response.json();
-    const scriptText = data.candidates[0].content.parts[0].text;
-    document.getElementById('scriptOutput').innerText = scriptText;
-  } catch (error) {
-    alert("Error generating script: " + error.message);
-  }
-}
-</script>

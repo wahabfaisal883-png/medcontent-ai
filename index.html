@@ -3,78 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedContent AI</title>
+    <title>MedContent AI - Studio</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        *{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#1e293b}
-        .app{display:flex;min-height:100vh}.side{width:250px;background:#10243e;color:white;padding:24px;display:flex;flex-direction:column;gap:16px}
-        .brand{font-size:20px;font-weight:700}.nav button{width:100%;text-align:left;padding:12px;margin:4px 0;background:transparent;border:none;color:#94a3b8;border-radius:8px;cursor:pointer;font-size:15px}
-        .nav button.active{background:#1e3a8a;color:white}.main{flex:1;padding:32px}.section{background:white;padding:24px;border-radius:12px;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:20px}
-        .btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:600}.btn-primary{background:#2563eb;color:white}.btn-danger{background:#dc2626;color:white}
-        input,select,textarea{width:100%;padding:10px;margin:8px 0 16px;border:1px solid #cbd5e1;border-radius:6px}
-        .hide{display:none}
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #151c2c;
+            --border-color: #232d42;
+            --accent-blue: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* Sidebar */
+        aside { width: 270px; background: #0f172a; border-right: 1px solid var(--border-color); padding: 28px 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0; }
+        .brand { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .brand span { color: var(--accent-blue); }
+        .organizer-tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-blue); margin-top: 4px; display: block; }
+        
+        .nav { margin-top: 30px; }
+        .nav button { width: 100%; text-align: left; padding: 12px 16px; margin: 6px 0; background: transparent; border: 1px solid transparent; color: var(--text-muted); border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; transition: all 0.25s ease; }
+        .nav button:hover, .nav button.active { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); color: #fff; }
+        .nav button.active { background: var(--accent-gradient); border-color: transparent; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35); }
+
+        /* Main Content */
+        main { flex: 1; padding: 32px; overflow-y: auto; max-width: 1200px; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        .header h1 { font-size: 28px; font-weight: 800; }
+        .user-badge { background: var(--bg-card); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .user-badge .dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
+
+        /* Cards & Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin-bottom: 32px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 24px; border-radius: 16px; transition: transform 0.2s ease; }
+        .card:hover { transform: translateY(-2px); }
+        .stat { font-size: 32px; font-weight: 800; color: var(--accent-blue); margin-top: 10px; }
+
+        /* Forms & Inputs */
+        label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin: 16px 0 8px; }
+        input, select, textarea { width: 100%; padding: 12px 16px; background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; color: #fff; font-size: 14px; outline: none; transition: 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        textarea { resize: vertical; min-height: 100px; }
+
+        /* Buttons */
+        .actions { margin-top: 24px; }
+        .btn { padding: 12px 24px; border-radius: 10px; border: none; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--accent-gradient); color: white; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3); }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3); }
+        
+        .hide { display: none !important; }
+
+        @media (max-width: 850px) {
+            body { flex-direction: column; }
+            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
+            main { padding: 20px; }
+        }
     </style>
 </head>
 <body>
-    <div class="app">
-        <aside class="side">
+
+    <!-- Sidebar -->
+    <aside>
+        <div>
             <div class="brand">MedContent <span>AI</span></div>
+            <span class="organizer-tag">Organizer: Faisal Wahab</span>
+            
             <nav class="nav">
                 <button class="active" onclick="show('dashboard', this)">📊 Dashboard</button>
                 <button onclick="show('creator', this)">📝 Script Creator</button>
+                <button onclick="show('video', this)">🎬 Video Workflow</button>
+                <button onclick="show('thumbnail', this)">🖼️ Thumbnail</button>
                 <button onclick="show('publish', this)">🚀 Publish to YouTube</button>
             </nav>
-        </aside>
-        <main class="main">
-            <!-- Dashboard -->
-            <section id="dashboard" class="section">
-                <h2>Medical Content Studio</h2>
-                <p>Welcome to MedContent AI. Status: <strong>System Online</strong></p>
-            </section>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); text-align: center;">
+            MedContent AI v2.0
+        </div>
+    </aside>
 
-            <!-- Script Creator -->
-            <section id="creator" class="section hide">
-                <h2>AI Script Creator</h2>
+    <!-- Main Section -->
+    <main>
+        <div class="header">
+            <div>
+                <h1 id="pageTitle">Medical Content Studio</h1>
+                <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Powered by AI • Organized by Faisal Wahab</p>
+            </div>
+            <div class="user-badge">
+                <span class="dot"></span> Faisal Wahab
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <section id="dashboard">
+            <div class="grid">
+                <div class="card">
+                    <span style="color:var(--text-muted); font-size:13px; font-weight:600;">Videos Created</span>
+                    <div class="stat">0</div>
+                </div>
+                <div class="card">
+                    <span style="color:var(--text-muted); font-size:13px; font-weight:600;">Draft Scripts</span>
+                    <div class="stat">0</div>
+                </div>
+                <div class="card">
+                    <span style="color:var(--text-muted); font-size:13px; font-weight:600;">Ready for Editing</span>
+                    <div class="stat">0</div>
+                </div>
+                <div class="card">
+                    <span style="color:var(--text-muted); font-size:13px; font-weight:600;">Target Platforms</span>
+                    <div class="stat">4</div>
+                    <span style="color:var(--text-muted); font-size:11px; margin-top:6px; display:block;">Shorts • Reels • TikTok • FB</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Quick Script Generator</h3>
+                <p style="color:var(--text-muted); font-size:14px; margin-top:6px;">Generate structured short-form scripts for nursing and medical education.</p>
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="show('creator', document.querySelectorAll('.nav button')[1])">Launch Script Creator</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Script Creator -->
+        <section id="creator" class="hide">
+            <div class="card">
+                <h3>Create Educational Script</h3>
                 <label>Medical Topic</label>
                 <input id="topic" placeholder="e.g. 5 signs of hypoglycemia">
-                <button class="btn btn-primary" onclick="generateScript()">Generate Script</button>
-                <div id="scriptOutput" style="margin-top:16px;white-space:pre-wrap;"></div>
-            </section>
-
-            <!-- YouTube Publish Section -->
-            <section id="publish" class="section hide">
-                <h2>Publish to YouTube</h2>
-                <p>Upload your generated video directly to your YouTube Channel.</p>
                 
-                <div id="authArea">
-                    <button class="btn btn-danger" onclick="loginYouTube()">🔑 Connect YouTube Channel</button>
+                <label>Video Duration</label>
+                <select id="length">
+                    <option value="15">15 seconds (Quick Tip)</option>
+                    <option value="30" selected>30 seconds (Standard Short)</option>
+                    <option value="60">60 seconds (In-depth)</option>
+                </select>
+                
+                <label>Language</label>
+                <select id="lang">
+                    <option value="English">English</option>
+                    <option value="Roman Urdu">Simple Urdu / Roman Urdu</option>
+                </select>
+                
+                <label>Target Audience</label>
+                <select id="aud">
+                    <option value="Nursing students">Nursing Students / Medical Staff</option>
+                    <option value="General public">General Public</option>
+                </select>
+                
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="generateScript()">✨ Generate AI Script</button>
                 </div>
+            </div>
+            
+            <div id="outputCard" class="card hide" style="margin-top:20px;">
+                <h3>Generated Script</h3>
+                <div id="output" style="margin-top:14px; white-space: pre-wrap; font-family: inherit; line-height: 1.6; color:#e2e8f0;"></div>
+            </div>
+        </section>
 
-                <div id="uploadArea" class="hide">
-                    <p style="color:green;font-weight:bold;">✅ YouTube Connected!</p>
-                    <label>Video Title</label>
-                    <input id="ytTitle" placeholder="Enter video title">
-                    <label>Video Description</label>
-                    <textarea id="ytDesc" placeholder="Enter video description"></textarea>
-                    <label>Select Video File</label>
-                    <input type="file" id="ytFile" accept="video/*">
-                    <button class="btn btn-primary" onclick="uploadVideo()">Upload Video</button>
+        <!-- Video Workflow -->
+        <section id="video" class="hide">
+            <div class="grid">
+                <div class="card"><b>1. Voiceover</b><p style="color:var(--text-muted); font-size:13px; margin-top:8px;">Record audio or use AI voice generator.</p></div>
+                <div class="card"><b>2. Visuals & B-Roll</b><p style="color:var(--text-muted); font-size:13px; margin-top:8px;">Attach 3D medical animations or diagrams.</p></div>
+                <div class="card"><b>3. Captions</b><p style="color:var(--text-muted); font-size:13px; margin-top:8px;">Auto-generate readable vertical subtitles.</p></div>
+                <div class="card"><b>4. Export Settings</b><p style="color:var(--text-muted); font-size:13px; margin-top:8px;">Vertical 9:16 aspect ratio (1080x1920).</p></div>
+            </div>
+        </section>
+
+        <!-- Thumbnail -->
+        <section id="thumbnail" class="hide">
+            <div class="card">
+                <h3>Thumbnail Design Studio</h3>
+                <p style="color:var(--text-muted); font-size:14px; margin-top:6px;">High-CTR layout generator coming soon.</p>
+            </div>
+        </section>
+
+        <!-- Publish to YouTube -->
+        <section id="publish" class="hide">
+            <div id="authArea" class="card">
+                <h3>Connect YouTube Channel</h3>
+                <p style="color:var(--text-muted); font-size:14px; margin-top:6px; margin-bottom:18px;">Authenticate with Google to publish directly to YouTube.</p>
+                <button class="btn btn-danger" onclick="loginYouTube()">🔑 Connect YouTube Channel</button>
+            </div>
+
+            <div id="uploadArea" class="card hide">
+                <p style="color:#10b981; font-weight:700; margin-bottom:16px;">✅ Channel Connected Successfully!</p>
+                
+                <label>Video Title</label>
+                <input id="ytTitle" placeholder="e.g. 5 Signs of Hypoglycemia #Shorts">
+                
+                <label>Video Description</label>
+                <textarea id="ytDesc" placeholder="Enter description, clinical context, and hashtags..."></textarea>
+                
+                <label>Select Video File</label>
+                <input type="file" id="ytFile" accept="video/*">
+                
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="uploadVideo()">🚀 Upload Video to YouTube</button>
                 </div>
-            </section>
-        </main>
-    </div>
+            </div>
+        </section>
+    </main>
 
     <script>
-        // CONFIGURATION
         const CLIENT_ID = '1095384336789-p4k97r1gl36roc6brqtqut0624in0fl3.apps.googleusercontent.com';
-
         let accessToken = null;
 
         function show(id, btn) {
-            document.querySelectorAll('.section').forEach(s => s.classList.add('hide'));
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hide'));
             document.getElementById(id).classList.remove('hide');
             document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if(btn) btn.classList.add('active');
+        }
+
+        function generateScript() {
+            const topic = document.getElementById('topic').value;
+            if(!topic) { alert('Please enter a medical topic.'); return; }
+            document.getElementById('outputCard').classList.remove('hide');
+            document.getElementById('output').innerText = `[Title: ${topic}]\n[Organizer: Faisal Wahab]\n\n[Hook 0-3s]: Did you know this about ${topic}?\n[Key Info 4-20s]: Here are the core clinical points you must remember...\n[Call To Action 21-30s]: Follow MedContent AI for more nursing and medical tips!`;
         }
 
         function loginYouTube() {
@@ -98,7 +252,7 @@
             const desc = document.getElementById('ytDesc').value;
 
             if (!file || !accessToken) {
-                alert('Please select a video and ensure YouTube is connected.');
+                alert('Please select a video file and ensure YouTube is connected.');
                 return;
             }
 

@@ -1,316 +1,152 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedContent AI - Multi-Platform Studio</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-main: #0b0f19;
-            --bg-card: #151c2c;
-            --border-color: #232d42;
-            --accent-blue: #3b82f6;
-            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MedContent AI</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#172033}
+.app{display:flex;min-height:100vh}.side{width:250px;background:#10243e;color:white;padding:24px 16px;position:fixed;inset:0 auto 0 0}.brand{font-size:22px;font-weight:800;padding:10px 12px 28px}.brand span{color:#39c6a0}.nav button{width:100%;border:0;background:transparent;color:#d7e2ef;text-align:left;padding:13px 14px;border-radius:10px;margin:3px 0;font-size:14px;cursor:pointer}.nav button.active,.nav button:hover{background:#1d3858;color:#fff}.main{margin-left:250px;width:calc(100% - 250px);padding:28px;max-width:1400px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.top h1{margin:0;font-size:28px}.badge{background:#e2f8f2;color:#087b62;padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{background:white;border:1px solid #e7ebf1;border-radius:16px;padding:20px;box-shadow:0 4px 16px #10243e0b}.stat{font-size:28px;font-weight:800;margin:8px 0}.muted{color:#718096;font-size:13px}.section{margin-top:22px}.section h2{font-size:18px;margin:0 0 14px}.creator{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.label{font-size:13px;font-weight:700;margin:13px 0 7px;display:block}textarea,input,select{width:100%;padding:12px;border:1px solid #d9e0e9;border-radius:10px;font:inherit;background:#fff}textarea{min-height:115px;resize:vertical}.btn{border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:#18b98b;color:white}.secondary{background:#eef3f8;color:#22334a}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.output{min-height:300px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:16px;white-space:pre-wrap;line-height:1.55}.platforms{display:flex;gap:10px;flex-wrap:wrap}.pill{padding:8px 12px;border:1px solid #dbe3ed;border-radius:20px;font-size:12px}.notice{background:#fff8e6;border:1px solid #f4df9b;padding:12px;border-radius:10px;font-size:12px;color:#765a00;margin-top:12px}.hide{display:none}@media(max-width:900px){.side{width:210px}.main{margin-left:210px;width:calc(100% - 210px)}.grid{grid-template-columns:repeat(2,1fr)}.creator{grid-template-columns:1fr}}@media(max-width:650px){.side{position:static;width:100%;min-height:auto}.app{display:block}.main{margin:0;width:100%;padding:18px}.grid{grid-template-columns:1fr 1fr}.top{gap:10px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap}.brand{padding-bottom:12px}}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
-
-        /* LOGIN OVERLAY STYLES */
-        #loginScreen {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(11, 15, 25, 0.98);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999;
-        }
-        .login-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 32px;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 380px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-
-        aside { width: 270px; background: #0f172a; border-right: 1px solid var(--border-color); padding: 28px 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0; }
-        .brand { font-size: 22px; font-weight: 800; color: #fff; }
-        .brand span { color: var(--accent-blue); }
-        .organizer-tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-blue); margin-top: 4px; display: block; }
-        
-        .nav { margin-top: 25px; }
-        .nav button { width: 100%; text-align: left; padding: 12px 16px; margin: 5px 0; background: transparent; border: 1px solid transparent; color: var(--text-muted); border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
-        .nav button:hover, .nav button.active { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); color: #fff; }
-        .nav button.active { background: var(--accent-gradient); border-color: transparent; }
-
-        main { flex: 1; padding: 32px; overflow-y: auto; max-width: 1200px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
-        .user-badge { background: var(--bg-card); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .user-badge .dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; }
-
-        .card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 24px; border-radius: 16px; margin-bottom: 20px; }
-        label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin: 14px 0 6px; text-align: left; }
-        input, select, textarea { width: 100%; padding: 12px 16px; background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; color: #fff; font-size: 14px; outline: none; }
-        textarea { resize: vertical; min-height: 90px; }
-
-        .actions { margin-top: 20px; display: flex; gap: 12px; }
-        .btn { padding: 12px 24px; border-radius: 10px; border: none; font-weight: 700; font-size: 14px; cursor: pointer; }
-        .btn-primary { background: var(--accent-gradient); color: white; }
-        .btn-success { background: #10b981; color: white; }
-        .btn-danger { background: #ef4444; color: white; }
-
-        .platform-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
-        .platform-card { background: #0b0f19; border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; }
-        .platform-card h4 { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-
-        .hide { display: none !important; }
-    </style>
+.login{position:fixed;inset:0;background:#10243e;display:flex;align-items:center;justify-content:center;z-index:99;padding:20px}.loginbox{width:min(420px,100%);background:#fff;border-radius:20px;padding:30px;box-shadow:0 20px 60px #0005}.loginbox h1{margin:0 0 6px}.loginbox .muted{margin-bottom:22px}.err{color:#c53030;font-size:13px;margin-top:9px;display:none}.logout{position:absolute;right:28px;top:24px}
+.adminbar{display:flex;align-items:center;gap:10px}.avatar{width:34px;height:34px;border-radius:50%;background:#18b98b;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+</style>
 </head>
 <body>
+<div id="login" class="login">
+  <div class="loginbox">
+    <h1>🩺 MedContent AI</h1>
+    <div class="muted">Admin Login</div>
+    <label class="label">Username</label>
+    <input id="loginUser" value="admin" autocomplete="username">
+    <label class="label">Password</label>
+    <input id="loginPass" type="password" placeholder="Enter admin password" autocomplete="current-password">
+    <div id="loginErr" class="err">Invalid username or password.</div>
+    <div class="actions"><button class="btn primary" style="width:100%" onclick="login()">Login to Dashboard</button></div>
+    <div class="notice">Prototype login only. For a real public website, the password must be protected by a server/database rather than stored in browser code.</div>
+  </div>
+</div>
+<div class="app">
+<aside class="side">
+<div class="brand">🩺 MedContent <span>AI</span></div>
+<div class="nav">
+<button class="active" onclick="show('dashboard',this)">📊 Dashboard</button>
+<button onclick="show('creator',this)">✍️ Script Creator</button>
+<button onclick="show('video',this)">🎬 Video Workflow</button>
+<button onclick="show('thumbnail',this)">🖼️ Thumbnail</button>
+<button onclick="show('publish',this)">🚀 Publish</button>
+</div>
+</aside>
+<main class="main">
+<section id="dashboard">
+<div class="top"><div><h1>Medical Content Studio</h1><div class="muted">Create professional nursing & medical short-form content.</div></div><div class="adminbar"><div><b>Admin</b><div class="muted">Owner</div></div><div class="avatar">A</div><button class="btn secondary" onclick="logout()">Logout</button></div></div>
+<div class="grid">
+<div class="card"><div class="muted">Videos created</div><div class="stat">0</div><div class="muted">Start your first video</div></div>
+<div class="card"><div class="muted">Draft scripts</div><div class="stat">0</div><div class="muted">Ready for editing</div></div>
+<div class="card"><div class="muted">Platforms</div><div class="stat">4</div><div class="muted">Shorts • Reels • TikTok • Facebook</div></div>
+<div class="card"><div class="muted">Status</div><div class="stat">Ready</div><div class="muted">Prototype mode</div></div>
+</div>
+<div class="section card"><h2>Quick Start</h2><p class="muted">Enter a medical topic and generate a short-video script. The prototype keeps your content workflow in one place.</p>
+<div class="actions"><button class="btn primary" onclick="show('creator',document.querySelectorAll('.nav button')[1])">Create a Script</button></div></div>
+</section>
 
-    <!-- ADMIN LOGIN SCREEN -->
-    <div id="loginScreen">
-        <div class="login-card">
-            <h2 style="margin-bottom:8px;">🔒 Admin Access</h2>
-            <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Please login to access MedContent AI</p>
-            
-            <label>Admin Username</label>
-            <input type="text" id="adminUser" placeholder="Enter Admin Name">
+<section id="creator" class="hide">
+<div class="top"><div><h1>AI Script Creator</h1><div class="muted">Turn a topic into a short educational script.</div></div></div>
+<div class="creator">
+<div class="card">
+<label class="label">Medical topic</label><input id="topic" placeholder="e.g. 5 signs of hypoglycemia">
+<label class="label">Video length</label><select id="length"><option>15 seconds</option><option selected>30 seconds</option><option>60 seconds</option></select>
+<label class="label">Language</label><select id="lang"><option>English</option><option>Simple Urdu</option><option>Roman Urdu</option><option>English + Roman Urdu</option></select>
+<label class="label">Audience</label><select id="aud"><option>Nursing students</option><option>General public</option><option>Healthcare students</option></select>
+<div class="actions"><button class="btn primary" onclick="generate()">Generate Script</button><button class="btn secondary" onclick="clearAll()">Clear</button></div>
+<div class="notice">Educational content only. Verify clinical information with reliable medical sources before publishing.</div>
+</div>
+<div class="card"><h2>Generated Script</h2><div id="output" class="output">Your script will appear here…</div><div class="actions"><button class="btn secondary" onclick="copyText()">Copy</button><button class="btn primary" onclick="show('video',document.querySelectorAll('.nav button')[2])">Continue to Video</button></div></div>
+</div>
+</section>
 
-            <label>Password</label>
-            <input type="password" id="adminPass" placeholder="Enter Password">
+<section id="video" class="hide">
+<div class="top"><div><h1>Video Workflow</h1><div class="muted">Prepare your short for production.</div></div></div>
+<div class="card">
+<h2>Production checklist</h2>
+<div class="grid">
+<div class="card"><b>1. Voice</b><p class="muted">Record your voice or connect a voice generator.</p></div>
+<div class="card"><b>2. Visuals</b><p class="muted">Add medical B-roll, diagrams or an AI presenter.</p></div>
+<div class="card"><b>3. Captions</b><p class="muted">Generate readable subtitles for mobile viewers.</p></div>
+<div class="card"><b>4. Export</b><p class="muted">Recommended: vertical 9:16, 1080×1920.</p></div>
+</div>
+<div class="actions"><button class="btn primary" onclick="show('thumbnail',document.querySelectorAll('.nav button')[3])">Make Thumbnail</button></div>
+</div>
+</section>
 
-            <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="checkLogin()">Login to System</button>
-            <p id="loginError" style="color:#ef4444; font-size:12px; margin-top:12px; display:none;">Incorrect Admin Name or Password!</p>
-        </div>
-    </div>
+<section id="thumbnail" class="hide">
+<div class="top"><div><h1>Thumbnail Studio</h1><div class="muted">Create a simple thumbnail brief.</div></div></div>
+<div class="card">
+<label class="label">Thumbnail headline</label><input id="thumb" placeholder="5 SIGNS OF HYPOGLYCEMIA">
+<label class="label">Visual direction</label><textarea id="visual" placeholder="Clean medical background, nurse/doctor, large readable headline, professional educational style."></textarea>
+<div class="actions"><button class="btn primary" onclick="makeBrief()">Generate Thumbnail Brief</button></div>
+<div id="brief" class="output" style="margin-top:14px">Thumbnail brief will appear here…</div>
+<div class="actions"><button class="btn primary" onclick="show('publish',document.querySelectorAll('.nav button')[4])">Continue to Publish</button></div>
+</div>
+</section>
 
-    <!-- MAIN APP DASHBOARD -->
-    <aside>
-        <div>
-            <div class="brand">MedContent <span>AI</span></div>
-            <span class="organizer-tag">Organizer: Faisal Wahab</span>
-            
-            <nav class="nav">
-                <button class="active" onclick="show('creator', this)">1️⃣ Step 1: AI Script</button>
-                <button onclick="show('video', this)">2️⃣ Step 2: Video Studio</button>
-                <button onclick="show('thumbnail', this)">3️⃣ Step 3: Thumbnail</button>
-                <button onclick="show('publish', this)">4️⃣ Step 4: Multi-Publish</button>
-            </nav>
-        </div>
-        <div style="font-size: 12px; color: var(--text-muted); text-align: center;">Pipeline Studio v4.0</div>
-    </aside>
+<section id="publish" class="hide">
+<div class="top"><div><h1>Publish Center</h1><div class="muted">Prepare metadata and publishing destinations.</div></div></div>
+<div class="card">
+<label class="label">Title</label><input id="title" placeholder="5 Signs of Hypoglycemia You Should Know">
+<label class="label">Caption</label><textarea id="caption" placeholder="Educational medical content. Follow for more nursing and health education."></textarea>
+<label class="label">Hashtags</label><input id="tags" placeholder="#nursing #medical #health #nursingstudent">
+<label class="label">Platforms</label><div class="platforms"><span class="pill">YouTube Shorts</span><span class="pill">Instagram Reels</span><span class="pill">Facebook Reels</span><span class="pill">TikTok</span></div>
+<div class="actions"><button class="btn primary" onclick="alert('Prototype: publishing connections are not connected yet.')">Publish</button><button class="btn secondary" onclick="alert('Prototype saved locally in this page session.')">Save Draft</button></div>
+<div class="notice">Publishing requires connecting your social accounts and giving the website permission to post. This prototype does not upload anything automatically.</div>
+</div>
+</section>
+</main>
+</div>
+<script>
+const ADMIN_USER="admin", ADMIN_PASS="MedAdmin123!";
+function login(){
+  const u=document.getElementById('loginUser').value.trim();
+  const pw=document.getElementById('loginPass').value;
+  if(u===ADMIN_USER && pw===ADMIN_PASS){
+    sessionStorage.setItem('med_admin','1');
+    document.getElementById('login').style.display='none';
+    document.getElementById('loginErr').style.display='none';
+  }else document.getElementById('loginErr').style.display='block';
+}
+function logout(){sessionStorage.removeItem('med_admin');location.reload()}
+document.addEventListener('DOMContentLoaded',()=>{
+  if(sessionStorage.getItem('med_admin')==='1') document.getElementById('login').style.display='none';
+});
 
-    <main>
-        <div class="header">
-            <div>
-                <h2>Automated Medical Content Pipeline</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Long Videos + Shorts $\rightarrow$ Multi-Platform Auto Publish</p>
-            </div>
-            <div class="user-badge"><span class="dot"></span> Faisal Wahab</div>
-        </div>
-
-        <!-- STEP 1: SCRIPT -->
-        <section id="creator">
-            <div class="card">
-                <h3>📝 Step 1: Generate Medical Script</h3>
-                
-                <label>Video Type</label>
-                <select id="videoType">
-                    <option value="short">Short Video (15s - 60s)</option>
-                    <option value="long">YouTube Long Video (3 min - 10 min)</option>
-                </select>
-
-                <label>Medical Topic</label>
-                <input id="topic" placeholder="e.g. Complete Guide to Hypertension & Management">
-                
-                <div class="actions">
-                    <button class="btn btn-primary" onclick="generateScript()">Generate & Proceed to Video Studio $\rightarrow$</button>
-                </div>
-            </div>
-            <div id="scriptOutputCard" class="card hide">
-                <h4>Generated Script:</h4>
-                <div id="output" style="margin-top:10px; white-space:pre-wrap; color:#e2e8f0; line-height:1.6;"></div>
-            </div>
-        </section>
-
-        <!-- STEP 2: VIDEO STUDIO -->
-        <section id="video" class="hide">
-            <div class="card">
-                <h3>🎬 Step 2: High Quality Video Studio (HD/4K)</h3>
-                <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">Upload finished HD video files for YouTube Long Form or Vertical Shorts.</p>
-                
-                <label>YouTube Long Video (16:9 Landscape - 1080p/4K)</label>
-                <input type="file" id="longVideoFile" accept="video/*">
-
-                <label>Shorts / Reels Video (9:16 Vertical - 1080x1920 HD)</label>
-                <input type="file" id="shortVideoFile" accept="video/*">
-
-                <div class="actions">
-                    <button class="btn btn-primary" onclick="show('thumbnail', document.querySelectorAll('.nav button')[2])">Proceed to Thumbnail $\rightarrow$</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- STEP 3: THUMBNAIL -->
-        <section id="thumbnail" class="hide">
-            <div class="card">
-                <h3>🖼️ Step 3: Thumbnail Design Studio</h3>
-                <label>YouTube Long Video Thumbnail (1280x720 - HD)</label>
-                <input type="file" id="longThumbFile" accept="image/*">
-
-                <label>Vertical Cover Image for Shorts/Reels</label>
-                <input type="file" id="shortThumbFile" accept="image/*">
-
-                <div class="actions">
-                    <button class="btn btn-primary" onclick="preparePublishing()">Proceed to Multi-Platform Publish $\rightarrow$</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- STEP 4: MULTI PUBLISH -->
-        <section id="publish" class="hide">
-            <div class="card">
-                <h3>🚀 Step 4: Multi-Platform Auto-Publisher</h3>
-                <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">Publish long-form medical lectures and short reels across all social channels.</p>
-                
-                <div class="platform-grid">
-                    <!-- YouTube Long Video -->
-                    <div class="platform-card">
-                        <h4>🔴 YouTube Long Video</h4>
-                        <span style="font-size:11px; color:#3b82f6;">Size: 16:9 Landscape (1080p)</span>
-                        <label>Video Title</label>
-                        <input id="ytLongTitle">
-                        <label>Full Description & Chapters</label>
-                        <textarea id="ytLongDesc"></textarea>
-                        <button class="btn btn-danger" style="width:100%; margin-top:10px;" onclick="uploadToYouTube('long')">Publish Long Video</button>
-                    </div>
-
-                    <!-- YouTube Shorts -->
-                    <div class="platform-card">
-                        <h4>🔴 YouTube Shorts</h4>
-                        <span style="font-size:11px; color:#10b981;">Size: 9:16 Vertical</span>
-                        <label>Short Title</label>
-                        <input id="ytShortTitle">
-                        <label>Description & #Shorts</label>
-                        <textarea id="ytShortDesc"></textarea>
-                        <button class="btn btn-danger" style="width:100%; margin-top:10px;" onclick="uploadToYouTube('short')">Publish Short Video</button>
-                    </div>
-
-                    <!-- TikTok -->
-                    <div class="platform-card">
-                        <h4>🎵 TikTok</h4>
-                        <span style="font-size:11px; color:#10b981;">Size: 9:16 Vertical</span>
-                        <label>Caption & Tags</label>
-                        <textarea id="ttDesc"></textarea>
-                        <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="alert('Publishing to TikTok...')">Publish to TikTok</button>
-                    </div>
-
-                    <!-- Facebook & Instagram -->
-                    <div class="platform-card">
-                        <h4>📸 FB / IG Reels</h4>
-                        <span style="font-size:11px; color:#10b981;">Size: 9:16 Reel</span>
-                        <label>Caption & Hashtags</label>
-                        <textarea id="metaDesc"></textarea>
-                        <button class="btn btn-success" style="width:100%; margin-top:10px;" onclick="alert('Publishing to Facebook & Instagram...')">Publish to Meta</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        // LOGIN CHECK FUNCTION
-        function checkLogin() {
-            const user = document.getElementById('adminUser').value;
-            const pass = document.getElementById('adminPass').value;
-            const errorMsg = document.getElementById('loginError');
-
-            if (user === "Faisal wahab" && pass === "Faisal@2007") {
-                document.getElementById('loginScreen').style.display = 'none';
-            } else {
-                errorMsg.style.display = 'block';
-            }
-        }
-
-        const CLIENT_ID = '1095384336789-p4k97r1gl36roc6brqtqut0624in0fl3.apps.googleusercontent.com';
-        let accessToken = null;
-
-        function show(id, btn) {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hide'));
-            document.getElementById(id).classList.remove('hide');
-            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-        }
-
-        function generateScript() {
-            const topic = document.getElementById('topic').value;
-            const type = document.getElementById('videoType').value;
-            if(!topic) { alert('Enter a medical topic'); return; }
-            
-            document.getElementById('scriptOutputCard').classList.remove('hide');
-            if(type === 'long') {
-                document.getElementById('output').innerText = `[YOUTUBE LONG VIDEO SCRIPT]\nTitle: Comprehensive Medical Guide: ${topic}\nOrganizer: Faisal Wahab\n\n0:00 - Introduction & Clinical Overview\n1:30 - Pathophysiology & Etiology\n4:00 - Nursing Assessment & Diagnostic Tests\n7:00 - Pharmacology & Interventions\n9:30 - Patient Education & Conclusion`;
-            } else {
-                document.getElementById('output').innerText = `[YOUTUBE SHORT SCRIPT]\nTitle: ${topic} in 60 Seconds!\nOrganizer: Faisal Wahab\n\n[Hook 0-3s]: Essential clinical facts about ${topic}!\n[Body 4-45s]: Top 3 symptoms every nursing student must know.\n[CTA 46-60s]: Subscribe to MedContent AI!`;
-            }
-        }
-
-        function preparePublishing() {
-            const topic = document.getElementById('topic').value || 'Medical Education Topic';
-            
-            document.getElementById('ytLongTitle').value = `${topic} | Clinical Nursing & Medical Guide`;
-            document.getElementById('ytLongDesc').value = `Comprehensive lecture on ${topic}.\n\nTimestamps:\n0:00 Intro\n1:30 Overview\n5:00 Treatment\n\nOrganizer: Faisal Wahab\n#nursing #medical #health #lecture`;
-
-            document.getElementById('ytShortTitle').value = `${topic} #Shorts`;
-            document.getElementById('ytShortDesc').value = `Quick overview on ${topic}.\n\nOrganizer: Faisal Wahab\n#Shorts #nursing #medical`;
-
-            document.getElementById('ttDesc').value = `Key facts: ${topic} #fyp #nursing #faisalwahab`;
-            document.getElementById('metaDesc').value = `Medical Guide: ${topic}. Created by MedContent AI.`;
-
-            show('publish', document.querySelectorAll('.nav button')[3]);
-        }
-
-        function uploadToYouTube(type) {
-            const client = google.accounts.oauth2.initTokenClient({
-                client_id: CLIENT_ID,
-                scope: 'https://www.googleapis.com/auth/youtube.upload',
-                callback: (res) => { if (res.access_token) { accessToken = res.access_token; startUpload(type); } }
-            });
-            client.requestAccessToken();
-        }
-
-        async function startUpload(type) {
-            const file = (type === 'long') 
-                ? document.getElementById('longVideoFile').files[0] 
-                : document.getElementById('shortVideoFile').files[0];
-
-            if(!file) { alert(`Please select a ${type} video file in Step 2!`); return; }
-
-            const title = (type === 'long') ? document.getElementById('ytLongTitle').value : document.getElementById('ytShortTitle').value;
-            const desc = (type === 'long') ? document.getElementById('ytLongDesc').value : document.getElementById('ytShortDesc').value;
-
-            const metadata = { snippet: { title: title, description: desc, categoryId: '27' }, status: { privacyStatus: 'public' } };
-            const form = new FormData();
-            form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-            form.append('file', file);
-
-            alert(`Uploading ${type.toUpperCase()} Video to YouTube... Please wait.`);
-
-            try {
-                const res = await fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=multipart&part=snippet,status', {
-                    method: 'POST', headers: { 'Authorization': `Bearer ${accessToken}` }, body: form
-                });
-                const data = await res.json();
-                if(data.id) alert(`Successfully Uploaded ${type.toUpperCase()} Video to YouTube! Video ID: ${data.id}`);
-            } catch(e) { alert('Error: ' + e.message); }
-        }
-    </script>
+function show(id,btn){document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById(id).classList.remove('hide');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active')}
+async function generate(){
+  const topic=document.getElementById('topic').value.trim();
+  const length=document.getElementById('length').value;
+  const lang=document.getElementById('lang').value;
+  const audience=document.getElementById('aud').value;
+  const output=document.getElementById('output');
+  if(!topic){output.textContent='Please enter a medical topic first.';return;}
+  output.textContent='Generating your medical script with AI…';
+  try{
+    const res=await fetch('/api/generate-script',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic,length,language:lang,audience})
+    });
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'AI request failed');
+    output.textContent=data.content||'No content returned.';
+    document.getElementById('title').value=topic.replace(/^./,c=>c.toUpperCase())+' | Medical & Nursing';
+    document.getElementById('caption').value='Learn the key points about '+topic+'. Educational content for nursing and health awareness.';
+    document.getElementById('tags').value='#nursing #medical #health #nursingstudent #medicaleducation';
+  }catch(err){
+    output.textContent='Error: '+err.message+'\n\nPlease check the Cloudflare deployment and OPENAI_API_KEY secret.';
+  }
+}
+function copyText(){navigator.clipboard?.writeText(document.getElementById('output').textContent);alert('Script copied.')}
+function clearAll(){document.getElementById('topic').value='';document.getElementById('output').textContent='Your script will appear here…'}
+function makeBrief(){let h=document.getElementById('thumb').value||'MEDICAL TOPIC';let v=document.getElementById('visual').value||'Clean professional medical design';document.getElementById('brief').textContent=`THUMBNAIL BRIEF\\n\\nHeadline: ${h}\\nStyle: ${v}\\nLayout: Large headline, clear subject, strong contrast, minimal text.\\nCanvas: 16:9 for YouTube or 9:16 cover for Reels/Shorts.`}
+</script>
 </body>
 </html>
